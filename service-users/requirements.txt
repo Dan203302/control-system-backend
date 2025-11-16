@@ -7,3 +7,7 @@ SQLAlchemy==2.0.36
 alembic==1.13.2
 passlib[bcrypt]==1.7.4
 PyJWT==2.9.0
+opentelemetry-sdk==1.25.0
+opentelemetry-exporter-otlp==1.25.0
+opentelemetry-instrumentation-fastapi==0.46b0
+opentelemetry-instrumentation-httpx==0.46b0

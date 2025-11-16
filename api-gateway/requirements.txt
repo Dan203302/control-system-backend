@@ -5,3 +5,7 @@ pydantic==2.7.4
 pydantic-settings==2.4.0
 redis==5.0.8
 fastapi-limiter==0.1.6
+opentelemetry-sdk==1.25.0
+opentelemetry-exporter-otlp==1.25.0
+opentelemetry-instrumentation-fastapi==0.46b0
+opentelemetry-instrumentation-httpx==0.46b0
