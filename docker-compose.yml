@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-controlsys}
+      POSTGRES_USER: ${POSTGRES_USER:-control}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-controlpwd}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    ports:
+      - "16686:16686"  # UI
+      - "4318:4318"    # OTLP http
+
+  service-users:
+    build: ./service-users
+    env_file:
+      - env.example
+    environment:
+      PORT: 8001
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8001"
+
+  service-orders:
+    build: ./service-orders
+    env_file:
+      - env.example
+    environment:
+      PORT: 8002
+    depends_on:
+      - postgres
+    ports:
+      - "8002:8002"
+
+  api-gateway:
+    build: ./api-gateway
+    env_file:
+      - env.example
+    environment:
+      PORT: 8080
+      USERS_BASE_URL: http://service-users:8001
+      ORDERS_BASE_URL: http://service-orders:8002
+    depends_on:
+      - service-users
+      - service-orders
+      - redis
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
