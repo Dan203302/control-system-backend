@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     postgres_user: str = Field(default="control")
     postgres_password: str = Field(default="controlpwd")
 
+    redis_host: str = Field(default="redis")
+    redis_port: int = Field(default=6379)
+
+    users_base_url: str = Field(default="http://service-users:8001")
+    orders_base_url: str = Field(default="http://service-orders:8002")
+
     otel_exporter_otlp_endpoint: str | None = Field(default=None)
 
     class Config:
