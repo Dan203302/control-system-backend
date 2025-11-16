@@ -30,7 +30,9 @@ services:
       - "4318:4318"    # OTLP http
 
   service-users:
-    build: ./service-users
+    build:
+      context: .
+      dockerfile: ./service-users/Dockerfile
     env_file:
       - env.example
     environment:
@@ -41,7 +43,9 @@ services:
       - "8001:8001"
 
   service-orders:
-    build: ./service-orders
+    build:
+      context: .
+      dockerfile: ./service-orders/Dockerfile
     env_file:
       - env.example
     environment:
@@ -52,7 +56,9 @@ services:
       - "8002:8002"
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
     env_file:
       - env.example
     environment:
