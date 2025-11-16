@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 
@@ -18,6 +18,19 @@ def add_exception_handlers(app: FastAPI):
             content={
                 "success": False,
                 "error": {"code": exc.code, "message": exc.message},
+            },
+        )
+
+    @app.exception_handler(HTTPException)
+    async def _http_exc_handler(request: Request, exc: HTTPException):
+        code = "http_error"
+        # Use detail if available, otherwise default status phrase
+        message = exc.detail if isinstance(exc.detail, str) else "HTTP Error"
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "success": False,
+                "error": {"code": code, "message": message},
             },
         )
 
