@@ -9,6 +9,8 @@ import httpx
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 import redis.asyncio as redis
+from common.logging import setup_logging
+from common.otel import setup_tracing
 
 
 app = FastAPI(title="api-gateway", version="0.1.0")
@@ -27,6 +29,8 @@ if settings.cors_list:
 
 @app.on_event("startup")
 async def on_startup():
+    setup_logging("api-gateway")
+    setup_tracing(app, "api-gateway", settings.otel_exporter_otlp_endpoint)
     r = redis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", encoding="utf-8", decode_responses=True)
     await FastAPILimiter.init(r)
 
